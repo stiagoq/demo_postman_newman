@@ -1,0 +1,34 @@
+name: demo postman + newman CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js 
+      uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+        #cache: 'npm'
+
+    - name: Configura set up of newman
+      run: |
+        #npm ci
+        npm install -g newman 
+        npm install -g newman-reporter-htmlextra
+        
+    - name: Run test with newman
+      run: |
+        node --no-deprecation $(which newman) run demo.postman_collection.json --environment demo.postman_environment.json -r htmlextra --reporter-htmlextra-export newman/reporte.html
+        
+    - name: Test Report Generation
+      if: success() || failure()
+      uses: actions/upload-artifact@v4
+      with:
+          name: Newman report
+          path: newman/reporte.html
