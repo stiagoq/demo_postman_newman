@@ -1,0 +1,438 @@
+{
+	"info": {
+		"_postman_id": "e1d7d67d-fb03-4c60-a9ef-0a944a04dc8f",
+		"name": "demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28894466"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"switch(pm.info.iteration){",
+							"",
+							"    case 0:",
+							"        var bodyRequestLogin = {",
+							"            \"email\": \"eve.holt@reqres.in\",",
+							"            \"password\": \"cityslicka\"",
+							"        }",
+							"",
+							"        var bodyRequestLogin200 = JSON.stringify(bodyRequestLogin)",
+							"        pm.environment.set(\"bodyRequestLogin\", bodyRequestLogin200);",
+							"    break;",
+							"",
+							"    case 1:",
+							"        var bodyRequestLogin = {",
+							"            \"email\": \"eve.holt@reqres.in\"",
+							"        }",
+							"        var bodyRequestLogin400 = JSON.stringify(bodyRequestLogin)",
+							"        pm.environment.set(\"bodyRequestLogin\", bodyRequestLogin400);",
+							"",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"switch(pm.info.iteration){",
+							"    case 0:",
+							"        pm.test(\"Status code is 200\", function () {",
+							"            pm.response.to.have.status(200);",
+							"        });",
+							"",
+							"        var tokenResponse = pm.response.json()",
+							"",
+							"        pm.test(\"token is correct\", function () {",
+							"            pm.expect(tokenResponse.token).to.eql(\"QpwL5tke4Pnpja7X4\")",
+							"        }); ",
+							"    break;",
+							"",
+							"    case 1:",
+							"        pm.test(\"Status code is 400\", function () {",
+							"            pm.response.to.have.status(400);",
+							"        });",
+							"",
+							"        var loginResponse = pm.response.json()",
+							"",
+							"        pm.test(\"mesasage error is correct\", function () {",
+							"            pm.expect(loginResponse.error).to.eql(\"Missing password\")",
+							"        }); ",
+							"    ",
+							"    break;",
+							"",
+							"}",
+							"",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{{bodyRequestLogin}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}api/login",
+					"host": [
+						"{{baseUrl}}api"
+					],
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"switch(pm.info.iteration){",
+							"    case 0:",
+							"    var bodyRequestCreate = {",
+							"        \"name\": \"morpheus\",",
+							"        \"job\": \"leader\"",
+							"    }",
+							"",
+							"    var bodyRequestCreate200 = JSON.stringify(bodyRequestCreate)",
+							"    pm.environment.set(\"bodyRequestCreate\", bodyRequestCreate200);",
+							"    pm.environment.set(\"pathUserCreate\", \"users\");",
+							"    break;",
+							"",
+							"    case 1:",
+							"    var bodyRequestCreate = {",
+							"        \"name\": \"morpheus\",",
+							"        \"job\": \"leader\"",
+							"    }",
+							"",
+							"    var bodyRequestCreate400 = JSON.stringify(bodyRequestCreate)",
+							"    pm.environment.set(\"bodyRequestCreate\", bodyRequestCreate400);",
+							"    pm.environment.set(\"pathUserCreate\", \"?dd\");",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"switch(pm.info.iteration){",
+							"    case 0:",
+							"        pm.test(\"Status code is 201\", function () {",
+							"            pm.response.to.have.status(201);",
+							"        });",
+							"",
+							"        var schemaJson200 = {",
+							"            type: \"object\",",
+							"            properties: {",
+							"                name: {type:\"string\"},",
+							"                job: {type:\"string\"},",
+							"                id: {type:\"string\"},",
+							"                createdAt: {type:\"string\"},",
+							"            },",
+							"            require: [\"name\", \"job\", \"id\", \"createdAt\"]",
+							"        };",
+							"",
+							"        pm.test('The JSON response schema is valid', function() {",
+							"            pm.response.to.have.jsonSchema(schemaJson200);",
+							"        });",
+							"    break;",
+							"",
+							"    case 1:",
+							"        pm.test(\"Status code is 404\", function () {",
+							"            pm.response.to.have.status(404);",
+							"        });",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{{bodyRequestCreate}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}api/{{pathUserCreate}}",
+					"host": [
+						"{{baseUrl}}api"
+					],
+					"path": [
+						"{{pathUserCreate}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"switch(pm.info.iteration){",
+							"    case 0:",
+							"        pm.environment.set(\"pathGetList\", \"users?page=2\");",
+							"    break;",
+							"",
+							"    case 1:",
+							"        pm.environment.set(\"pathGetList\", \";/us;rs?pag/sse=#\");",
+							"    break;",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"switch(pm.info.iteration){",
+							"    case 0:",
+							"        var schemaJson200 = {",
+							"            type: \"object\",",
+							"            properties:{",
+							"                page:{type:\"number\"},",
+							"                per_page: {type:\"number\"},",
+							"                total: {type:\"number\"},",
+							"                total_pages: {type:\"number\"},",
+							"                data: {type:\"array\"},",
+							"                support: {type:\"object\"}",
+							"            },",
+							"            require:[\"page\", \"per_page\", \"total\", \"total_pages\", \"data\", \"support\"]",
+							"        }",
+							"",
+							"        pm.test('The JSON response schema is valid', function() {",
+							"                pm.response.to.have.jsonSchema(schemaJson200);",
+							"        });",
+							"",
+							"        pm.test(\"Status code is 200\", function () {",
+							"            pm.response.to.have.status(200);",
+							"        });",
+							"    break; ",
+							"",
+							"    case 1:",
+							"        pm.test(\"Status code is 404\", function () {",
+							"            pm.response.to.have.status(404);",
+							"        });",
+							"",
+							"        var schemaJson400 = {type:\"object\"}",
+							"        pm.test('The JSON response schema is valid', function() {",
+							"                pm.response.to.have.jsonSchema(schemaJson400);",
+							"        });",
+							"    break;",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}api/{{pathGetList}}",
+					"host": [
+						"{{baseUrl}}api"
+					],
+					"path": [
+						"{{pathGetList}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"switch(pm.info.iteration){",
+							"    case 0:",
+							"        var bodyRequestUpdate = {",
+							"            \"name\": \"morpheus\",",
+							"            \"job\": \"zion resident\"",
+							"        }",
+							"",
+							"        var bodyRequestUpdate200 = JSON.stringify(bodyRequestUpdate)",
+							"        pm.environment.set(\"bodyRequestUpdate\", bodyRequestUpdate200);",
+							"        pm.environment.set(\"pathUpdate\", \"users/2\");",
+							"    break;",
+							"",
+							"    case 1:",
+							"        var bodyRequestUpdate = {",
+							"            \"name\": \"morpheus\",",
+							"            \"job\": \"zion resident\"",
+							"        }",
+							"",
+							"        var bodyRequestUpdate400 = JSON.stringify(bodyRequestUpdate)",
+							"        pm.environment.set(\"bodyRequestUpdate\", bodyRequestUpdate400);",
+							"        pm.environment.set(\"pathUpdate\", \"use?rs/2\");",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"switch(pm.info.iteration){",
+							"    case 0:",
+							"        var schemaJson200 = {",
+							"            type: \"object\",",
+							"            properties: {",
+							"                name: {type:\"string\"},",
+							"                job: {type:\"string\"},",
+							"                updatedAt: {type:\"string\"},",
+							"            },",
+							"            require: [\"name\", \"job\", \"updatedAt\"]",
+							"        };",
+							"",
+							"        pm.test('The JSON response schema is valid', function() {",
+							"            pm.response.to.have.jsonSchema(schemaJson200);",
+							"        });",
+							"",
+							"",
+							"        pm.test(\"Status code is 200\", function () {",
+							"            pm.response.to.have.status(200);",
+							"        });",
+							"    break",
+							"",
+							"    case 1:",
+							"        pm.test(\"Status code is 404\", function () {",
+							"            pm.response.to.have.status(404);",
+							"        });",
+							"    break;",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{{bodyRequestUpdate}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}api/{{pathUpdate}}",
+					"host": [
+						"{{baseUrl}}api"
+					],
+					"path": [
+						"{{pathUpdate}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"switch(pm.info.iteration){",
+							"    case 0:",
+							"        pm.environment.set(\"pathDelete\", \"users/2\");",
+							"    break;",
+							"",
+							"    case 1:",
+							"        pm.environment.set(\"pathDelete\", \"?rs?pag/sse=#\");",
+							"    break;",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"switch(pm.info.iteration){",
+							"    case 0:",
+							"        pm.test(\"Status code is 204\", function () {",
+							"            pm.response.to.have.status(204);",
+							"        });",
+							"    break;",
+							"",
+							"    case 1:",
+							"        pm.test(\"Status code is 404\", function () {",
+							"            pm.response.to.have.status(404);",
+							"        });",
+							"    break;",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}api/{{pathDelete}}",
+					"host": [
+						"{{baseUrl}}api"
+					],
+					"path": [
+						"{{pathDelete}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
